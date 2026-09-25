@@ -1,0 +1,15 @@
+{
+  "file": "2026-09-25T123228_sf1800_draw.pgn",
+  "date": "2026-09-25T12:32:28",
+  "stockfish_elo": 1800,
+  "stockfish_version": "Stockfish 17.1",
+  "our_engine": "Destroyer 0.2.0",
+  "our_color": "white",
+  "result": "1/2-1/2",
+  "outcome": "draw",
+  "plies": 139,
+  "move_time_s": 5.0,
+  "adjudicated": false,
+  "engine_commit": "2c0be6e",
+  "hardware": "Apple M5 Pro, 15 cores, Darwin"
+}

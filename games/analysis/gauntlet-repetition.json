@@ -1,0 +1,17 @@
+{
+  "a": "bin/destroyer",
+  "b": "bin/destroyer-engine-v2",
+  "games": 200,
+  "wins": 72,
+  "draws": 83,
+  "losses": 45,
+  "score": 0.5675,
+  "elo": 47.2,
+  "elo_95": [
+    10.7,
+    84.8
+  ],
+  "los": 0.9937,
+  "move_time_s": 0.1,
+  "verdict": "KEEP"
+}
