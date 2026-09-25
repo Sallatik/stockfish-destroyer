@@ -12,5 +12,20 @@
     "move_time_s": 5.0,
     "engine_commit": "ac20485",
     "hardware": "Apple M5 Pro, 15 cores, Darwin"
+  },
+  {
+    "file": "2026-09-25T122526_sf2000_loss.pgn",
+    "date": "2026-09-25T12:25:26",
+    "stockfish_elo": 2000,
+    "stockfish_version": "Stockfish 17.1",
+    "our_engine": "Destroyer 0.2.0",
+    "our_color": "white",
+    "result": "0-1",
+    "outcome": "loss",
+    "plies": 56,
+    "move_time_s": 5.0,
+    "adjudicated": false,
+    "engine_commit": "cca4e3c",
+    "hardware": "Apple M5 Pro, 15 cores, Darwin"
   }
 ]
