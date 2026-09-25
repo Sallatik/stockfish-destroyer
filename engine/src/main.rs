@@ -1,5 +1,8 @@
 //! Stockfish Destroyer: UCI engine.
-//! Iterative-deepening alpha-beta + quiescence search, material-only eval.
+//! Iterative-deepening alpha-beta + quiescence search, tapered PeSTO evaluation.
+
+mod eval;
+use eval::evaluate;
 
 use shakmaty::fen::Fen;
 use shakmaty::uci::UciMove;
@@ -28,17 +31,6 @@ fn mvv_lva(m: &Move) -> i32 {
         Some(victim) => 10 * piece_value(victim) - piece_value(m.role()) / 10,
         None => m.promotion().map_or(0, piece_value),
     }
-}
-
-/// Static eval from the side to move's perspective.
-fn evaluate(pos: &Chess) -> i32 {
-    let board = pos.board();
-    let mut score = 0;
-    for (_sq, piece) in board.iter() {
-        let v = piece_value(piece.role);
-        score += if piece.color == Color::White { v } else { -v };
-    }
-    if pos.turn() == Color::White { score } else { -score }
 }
 
 struct Search {
