@@ -1,0 +1,21 @@
+:root { --bg: #16161a; --panel: #1f1f25; --text: #e8e6e3; --muted: #8a8a94; --accent: #7fb069; --loss: #d1605e; }
+* { box-sizing: border-box; }
+body { margin: 0; display: grid; grid-template-columns: 260px 1fr 260px; gap: 16px; height: 100vh;
+  background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, sans-serif; }
+aside, #moves { background: var(--panel); padding: 16px; overflow-y: auto; }
+h1 { font-size: 16px; margin: 0 0 12px; }
+ul { list-style: none; margin: 0; padding: 0; }
+li { padding: 8px; border-radius: 6px; cursor: pointer; }
+li:hover, li.active { background: #2b2b33; }
+li .outcome-win { color: var(--accent); font-weight: 600; }
+li .outcome-loss { color: var(--loss); }
+li small { display: block; color: var(--muted); }
+main { display: flex; flex-direction: column; align-items: center; padding-top: 16px; }
+#board { width: min(70vh, 100%); aspect-ratio: 1; }
+#controls { margin-top: 12px; display: flex; gap: 8px; }
+button { background: var(--panel); color: var(--text); border: 1px solid #333; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 16px; }
+#moves { display: grid; grid-template-columns: 32px 1fr 1fr; align-content: start; gap: 2px 6px; }
+#moves .num { color: var(--muted); }
+#moves .ply { cursor: pointer; padding: 1px 4px; border-radius: 4px; }
+#moves .ply.current { background: var(--accent); color: #111; }
+@media (max-width: 900px) { body { grid-template-columns: 1fr; height: auto; } }

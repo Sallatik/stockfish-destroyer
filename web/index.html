@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stockfish Destroyer</title>
+  </head>
+  <body>
+    <aside id="games"><h1>Games</h1><ul id="game-list"></ul></aside>
+    <main>
+      <h2 id="title">Select a game</h2>
+      <div id="board" class="cg-wrap"></div>
+      <nav id="controls">
+        <button data-step="first">⏮</button>
+        <button data-step="prev">◀</button>
+        <button data-step="play">▶</button>
+        <button data-step="next">▶|</button>
+        <button data-step="last">⏭</button>
+      </nav>
+    </main>
+    <section id="moves"></section>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

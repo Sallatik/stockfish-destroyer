@@ -1,0 +1,6 @@
+# Pinned toolchain. `mise install` (run by scripts/setup.sh) makes every laptop identical.
+[tools]
+python = "3.12"
+uv = "latest"
+node = "22"
+rust = "stable"

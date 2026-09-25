@@ -1,0 +1,8 @@
+bin/
+.venv/
+__pycache__/
+node_modules/
+web/dist/
+engine/target/
+.claude/settings.local.json
+.DS_Store
