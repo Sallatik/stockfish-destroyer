@@ -1,34 +1,32 @@
 ---
 name: analyze-game
-description: Analyze a finished game vs Stockfish. Runs both required sub-agents (grandmaster + engine-dev), writes a report to games/analysis/, and updates JOURNAL.md. Use after every game. Pass a PGN path, or default to the newest game.
+description: Analyze a finished official game vs Stockfish. Runs the eval pass, then both required sub-agents (grandmaster + engine-dev) in parallel, which write their own reports; merges their action items into games/analysis/<stem>.md. Pass a PGN path, or omit to analyze every game that has no report yet.
 ---
 
 # Analyze a game
 
-Arguments: optional path to a `.pgn` in `games/`. If none, use the newest `games/*.pgn` by filename.
+Arguments: optional path to a `.pgn` in `games/`. If none: every `games/*.pgn` whose `games/analysis/<stem>.md` doesn't exist yet (the campaign runner adds games continuously).
 
-## Steps
+For each game:
 
-1. **Load the game.** Read the `.pgn` and its matching `.json` (same stem). Note Stockfish Elo, our color, result, engine commit, hardware.
+1. **Read** `games/<stem>.json` (Elo, result, adjudicated?, engine commit). Skim the PGN.
 
-2. **Eval pass** (gives both agents shared facts). Run:
-   `uv run python -m arena.evalgame <pgn> --out games/analysis/<stem>.evals.json`
-   This writes a per-ply Stockfish eval (full strength, fixed depth) and flags our moves with large eval drops.
+2. **Eval pass**: `uv run python -m arena.evalgame games/<stem>.pgn --out games/analysis/<stem>.evals.json` (skip if the file exists). Note the mistakes it prints.
 
-3. **Dispatch both sub-agents in parallel.** This is required by the rules. Send a single message with two Agent calls:
-   - `grandmaster`: give it the PGN path, the metadata, and the evals file path.
-   - `engine-dev`: same inputs, plus a pointer to `engine/src/`.
+3. **Both sub-agents, in parallel, one message with two Agent calls** (required by the rules). Give each: the PGN path, the JSON path, the evals path, the result, and the output path it must write:
+   - `grandmaster` → `games/analysis/<stem>.grandmaster.md`
+   - `engine-dev` → `games/analysis/<stem>.engine-dev.md` (also point it at `engine/src/`)
+   Tell them what's already in the plan queue (JOURNAL.md → Plan) so they focus on what's *new* in this game. Several games can be analyzed at once: run all agents in a single message.
 
-4. **Write the report** to `games/analysis/<stem>.md`:
+4. **Write** `games/analysis/<stem>.md` (short; the agents' files hold the detail):
    ```
    # <stem>: <WIN/LOSS/DRAW> vs Stockfish <elo>
-   meta: color, plies, engine commit, hardware
-   ## Summary (3 bullets, yours)
-   ## Grandmaster analysis (agent output, verbatim)
-   ## Engine-dev analysis (agent output, verbatim)
-   ## Action items (merged, deduplicated, ranked: max 5)
+   meta: color, plies, termination, engine tag/commit, hardware
+   ## Summary: 3 bullets (why the game went the way it did)
+   ## Action items: merged from both agents, deduplicated, max 5, ranked. Mark which are already queued in JOURNAL.md.
+   Reports: [grandmaster](<stem>.grandmaster.md) · [engine-dev](<stem>.engine-dev.md) · [evals](<stem>.evals.json)
    ```
 
-5. **Update `JOURNAL.md`.** Add one log line (date, result, Elo, top action item). If this is a win at a new highest Elo, update "Best verified win" with the PGN path.
+5. If an action item is new and important, add it to the JOURNAL.md Plan queue at the right priority. If it is a win at a new highest Elo, update "Best verified win".
 
-6. Tell the user the result, the top 3 action items, and the report path. Do not start implementing unless asked (or unless running inside the improvement loop).
+Do not start implementing here. Report: result, top 3 action items, report path.

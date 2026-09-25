@@ -6,13 +6,27 @@
       "Bash(cargo build:*)",
       "Bash(cargo test:*)",
       "Bash(cargo check:*)",
-      "Bash(cp engine/target/release/destroyer bin/:*)",
-      "Bash(./bin/stockfish:*)",
+      "Bash(scripts/build-engine.sh:*)",
+      "Bash(scripts/promote.sh:*)",
+      "Bash(./scripts/build-engine.sh:*)",
+      "Bash(./scripts/promote.sh:*)",
+      "Bash(bin/destroyer:*)",
       "Bash(bin/stockfish:*)",
+      "Bash(printf:*)",
+      "Bash(pgrep:*)",
+      "Bash(tail:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
       "Bash(npm run:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git tag:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git checkout -- engine/:*)"
     ]
   }
 }

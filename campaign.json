@@ -1,0 +1,6 @@
+{
+  "slots": [2000, 2000, 1800, 1600],
+  "engine": "bin/destroyer-official",
+  "move_time": 5.0,
+  "abort_hopeless": true
+}

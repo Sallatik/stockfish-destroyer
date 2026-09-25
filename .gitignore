@@ -6,3 +6,4 @@ web/dist/
 engine/target/
 .claude/settings.local.json
 .DS_Store
+campaign.log

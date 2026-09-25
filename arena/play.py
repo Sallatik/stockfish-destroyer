@@ -36,9 +36,16 @@ def hardware() -> str:
     return f"{cpu}, {os.cpu_count()} cores, {platform.system()}"
 
 
-def play(elo: int, our_color: chess.Color, move_time: float, engine_path: Path, out: Path = GAMES) -> Path:
+# Resign (adjudicate a loss) when our own eval stays below this for this many of our moves.
+HOPELESS_CP = -1500
+HOPELESS_MOVES = 20
+
+
+def play(elo: int, our_color: chess.Color, move_time: float, engine_path: Path, out: Path = GAMES,
+         abort_hopeless: bool = False, verbose: bool = False) -> Path:
     sf = chess.engine.SimpleEngine.popen_uci(str(STOCKFISH))
     ours = chess.engine.SimpleEngine.popen_uci(str(engine_path))
+    adjudicated = False
     try:
         sf.configure({"UCI_LimitStrength": True, "UCI_Elo": elo})
         sf_version = sf.id.get("name", "Stockfish")
@@ -46,22 +53,43 @@ def play(elo: int, our_color: chess.Color, move_time: float, engine_path: Path, 
 
         board = chess.Board()
         limit = chess.engine.Limit(time=move_time)
+        hopeless_streak = 0
         while not board.is_game_over(claim_draw=True):
-            player = ours if board.turn == our_color else sf
-            board.push(player.play(board, limit).move)
-            print(board.peek(), end=" ", flush=True)
-        print()
+            if board.turn == our_color:
+                res = ours.play(board, limit, info=chess.engine.INFO_SCORE)
+                score = res.info.get("score")
+                cp = score.relative.score(mate_score=10_000) if score else 0
+                hopeless_streak = hopeless_streak + 1 if cp <= HOPELESS_CP else 0
+                if abort_hopeless and hopeless_streak >= HOPELESS_MOVES:
+                    adjudicated = True
+                    break
+            else:
+                res = sf.play(board, limit)
+            board.push(res.move)
+            if verbose:
+                print(board.peek(), end=" ", flush=True)
+        if verbose:
+            print()
     finally:
         sf.quit()
         ours.quit()
 
-    result = board.result(claim_draw=True)
+    if adjudicated:
+        result = "0-1" if our_color == chess.WHITE else "1-0"
+        termination = "adjudication (resigned: hopeless position)"
+    else:
+        result = board.result(claim_draw=True)
+        termination = board.outcome(claim_draw=True).termination.name.lower()
     outcome = {"1-0": "white", "0-1": "black"}.get(result)
     ours_won = outcome == ("white" if our_color == chess.WHITE else "black")
     tag = "win" if ours_won else ("draw" if outcome is None else "loss")
 
     now = dt.datetime.now()
     stem = f"{now:%Y-%m-%dT%H%M%S}_sf{elo}_{tag}"
+    n = 2
+    while (out / f"{stem}.pgn").exists():  # parallel slots can finish in the same second
+        stem = f"{now:%Y-%m-%dT%H%M%S}-{n}_sf{elo}_{tag}"
+        n += 1
     sf_label = f"{sf_version} (UCI_Elo {elo})"
 
     game = chess.pgn.Game.from_board(board)
@@ -75,7 +103,7 @@ def play(elo: int, our_color: chess.Color, move_time: float, engine_path: Path, 
         "Result": result,
         "TimeControl": f"{move_time}s/move",
         "StockfishElo": str(elo),
-        "Termination": board.outcome(claim_draw=True).termination.name.lower(),
+        "Termination": termination,
     })
 
     meta = {
@@ -89,6 +117,7 @@ def play(elo: int, our_color: chess.Color, move_time: float, engine_path: Path, 
         "outcome": tag,
         "plies": len(board.move_stack),
         "move_time_s": move_time,
+        "adjudicated": adjudicated,
         "engine_commit": git_commit(),
         "hardware": hardware(),
     }
@@ -116,13 +145,15 @@ def main() -> None:
     ap.add_argument("--time", type=float, default=MOVE_TIME, help="seconds per move (max 5)")
     ap.add_argument("--engine", type=Path, default=OUR_ENGINE, help="path to our UCI engine")
     ap.add_argument("--out", type=Path, default=GAMES, help="output dir (default games/; use a tmp dir for smoke tests)")
+    ap.add_argument("--abort-hopeless", action="store_true", help="resign after 20 moves at <= -1500cp (saved as a loss)")
+    ap.add_argument("-v", "--verbose", action="store_true", help="print moves as they are played")
     args = ap.parse_args()
     if args.time > MOVE_TIME:
         ap.error("rules cap thinking time at 5 seconds per move")
 
     color = chess.WHITE if args.color == "white" else chess.BLACK
     for _ in range(args.games):
-        play(args.elo, color, args.time, args.engine, args.out)
+        play(args.elo, color, args.time, args.engine, args.out, args.abort_hopeless, args.verbose)
 
 
 if __name__ == "__main__":

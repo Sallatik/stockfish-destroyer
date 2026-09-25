@@ -63,7 +63,7 @@ def main() -> None:
         futs = [pool.submit(play_one, args.a, args.b, e, w, args.time) for e, w in jobs]
         for f in as_completed(futs):
             scores.append(f.result())
-            if len(scores) % 20 == 0:
+            if len(scores) % 50 == 0:
                 print(f"  {len(scores)}/{len(jobs)} games, score {sum(scores) / len(scores):.3f}", flush=True)
 
     n = len(scores)
