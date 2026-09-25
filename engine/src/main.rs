@@ -1,5 +1,5 @@
 //! Stockfish Destroyer: UCI engine.
-//! v0 baseline: iterative-deepening alpha-beta with material-only eval.
+//! Iterative-deepening alpha-beta + quiescence search, material-only eval.
 
 use shakmaty::fen::Fen;
 use shakmaty::uci::UciMove;
@@ -9,6 +9,7 @@ use std::time::{Duration, Instant};
 
 const MATE: i32 = 100_000;
 const INF: i32 = 1_000_000;
+const MAX_PLY: i32 = 96;
 
 fn piece_value(role: Role) -> i32 {
     match role {
@@ -18,6 +19,14 @@ fn piece_value(role: Role) -> i32 {
         Role::Rook => 500,
         Role::Queen => 900,
         Role::King => 0,
+    }
+}
+
+/// Move ordering key: most valuable victim first, least valuable attacker as tiebreak.
+fn mvv_lva(m: &Move) -> i32 {
+    match m.capture() {
+        Some(victim) => 10 * piece_value(victim) - piece_value(m.role()) / 10,
+        None => m.promotion().map_or(0, piece_value),
     }
 }
 
@@ -47,19 +56,62 @@ impl Search {
         if self.stopped {
             return 0;
         }
+        if depth == 0 {
+            return self.quiesce(pos, alpha, beta, ply);
+        }
         let moves = pos.legal_moves();
         if moves.is_empty() {
             return if pos.is_check() { -MATE + ply } else { 0 };
         }
-        if depth == 0 {
-            return evaluate(pos);
-        }
         let mut ordered: Vec<Move> = moves.into_iter().collect();
-        ordered.sort_by_key(|m| -m.capture().map_or(0, piece_value));
+        ordered.sort_by_key(|m| -mvv_lva(m));
         for m in ordered {
             let mut child = pos.clone();
             child.play_unchecked(&m);
             let score = -self.negamax(&child, depth - 1, -beta, -alpha, ply + 1);
+            if score >= beta {
+                return beta;
+            }
+            alpha = alpha.max(score);
+        }
+        alpha
+    }
+
+    /// Quiescence search: at the horizon, keep resolving captures/promotions so we never
+    /// evaluate a position in the middle of an exchange.
+    fn quiesce(&mut self, pos: &Chess, mut alpha: i32, beta: i32, ply: i32) -> i32 {
+        self.nodes += 1;
+        if self.nodes & 2047 == 0 && Instant::now() >= self.deadline {
+            self.stopped = true;
+        }
+        if self.stopped {
+            return 0;
+        }
+        if ply >= MAX_PLY {
+            return evaluate(pos);
+        }
+        let in_check = pos.is_check();
+        let moves = pos.legal_moves();
+        if moves.is_empty() {
+            return if in_check { -MATE + ply } else { 0 };
+        }
+        // stand pat: we can usually decline to capture (not when in check)
+        if !in_check {
+            let stand = evaluate(pos);
+            if stand >= beta {
+                return beta;
+            }
+            alpha = alpha.max(stand);
+        }
+        let mut ordered: Vec<Move> = moves
+            .into_iter()
+            .filter(|m| in_check || m.is_capture() || m.is_promotion())
+            .collect();
+        ordered.sort_by_key(|m| -mvv_lva(m));
+        for m in ordered {
+            let mut child = pos.clone();
+            child.play_unchecked(&m);
+            let score = -self.quiesce(&child, -beta, -alpha, ply + 1);
             if score >= beta {
                 return beta;
             }
