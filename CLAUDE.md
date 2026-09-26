@@ -19,7 +19,8 @@ Two-day team challenge: build our own chess engine and beat Stockfish (limited w
 - Promote current build to the campaign: `scripts/promote.sh`
 - Quick smoke test (don't commit): `uv run arena --elo 1320 --time 0.2 --out /tmp/sf-smoke`
 - A/B test two engine builds: `uv run python -m arena.gauntlet bin/destroyer bin/destroyer-<tag>` (build old versions with `scripts/build-engine.sh <tag>`)
-- Replay UI: `cd web && npm run dev`
+- Replay UI: `cd web && npm run dev` (ladder panel: per-level W-D-L, win ratio, average moves; 3190 highlighted)
+- Per-level stats on the command line: `uv run python -m arena.stats` (`--json` for machines)
 
 ## Hard rules (from mission.md, don't break these)
 - Max **5 s per move** for both players. Never raise `MOVE_TIME` in `arena/play.py`.
@@ -29,6 +30,7 @@ Two-day team challenge: build our own chess engine and beat Stockfish (limited w
 - After each game: run the `/analyze-game` skill, which dispatches **both** the `grandmaster` and `engine-dev` sub-agents. Only official games vs Stockfish count as matches; A/B games (engine vs engine) are test games and are not saved.
 - Official proof games are played as **white** (draws don't count, white wins more).
 - Development must use `/loop`, `/goal` or a dynamic workflow (we use the play → analyze → improve loop).
+- **Top level (addendum 2026-09-26)**: Stockfish's max `UCI_Elo` is **3190**. Once we win at 3190, all campaign slots stay at 3190 and the score is the **win ratio** (wins / all games at 3190) plus the **average game length in moves**. `uv run python -m arena.stats` prints both per level; the replay UI shows them in the ladder panel. Never raise a slot above 3190.
 
 ## Conventions
 - Knowledge goes in `JOURNAL.md` (committed), **not** Claude's auto-memory. We switch laptops and accounts.

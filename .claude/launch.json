@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "replay",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "web", "run", "dev", "--", "--port", "5173", "--strictPort"],
+      "name": "web",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-lc", "export PATH=\"$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:$PATH\"; cd web && npm run dev"],
       "port": 5173
     }
   ]

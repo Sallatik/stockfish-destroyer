@@ -96,3 +96,12 @@ The overall “wow factor” 🤩
 Build. Play. Analyze. Improve. Raise your Elo.
 And above all:
 ♟️ BEAT STOCKFISH! 🤖🔥
+---
+
+## 📣 Addendum (2026-09-26): what happens at the top
+
+Stockfish's maximum `UCI_Elo` is **3190**, and some teams have already reached it. To decide a winner at that level:
+
+- Once you beat Stockfish at Elo 3190, keep playing at 3190 and measure the **win ratio**: `wins / total games played at 3190` (draws and losses count as games, not wins).
+- Also measure **how many moves it takes on average** to finish a game at 3190 (full moves; shorter wins are better).
+- Both numbers must be **visible in the GUI**, next to the replayable games.

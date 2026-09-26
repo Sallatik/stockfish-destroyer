@@ -1,6 +1,6 @@
 :root { --bg: #16161a; --panel: #1f1f25; --text: #e8e6e3; --muted: #8a8a94; --accent: #7fb069; --loss: #d1605e; }
 * { box-sizing: border-box; }
-body { margin: 0; display: grid; grid-template-columns: 260px 1fr 260px; gap: 16px; height: 100vh;
+body { margin: 0; display: grid; grid-template-columns: 300px 1fr 260px; gap: 16px; height: 100vh;
   background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, sans-serif; }
 aside, #moves { background: var(--panel); padding: 16px; overflow-y: auto; }
 h1 { font-size: 16px; margin: 0 0 12px; }
@@ -19,3 +19,21 @@ button { background: var(--panel); color: var(--text); border: 1px solid #333; b
 #moves .ply { cursor: pointer; padding: 1px 4px; border-radius: 4px; }
 #moves .ply.current { background: var(--accent); color: #111; }
 @media (max-width: 900px) { body { grid-template-columns: 1fr; height: auto; } }
+
+/* ladder panel: per-level win ratio + average moves (3190 = Stockfish max decides the winner) */
+#stats { margin-bottom: 16px; }
+.stat-card { background: #2b2b33; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; border: 1px solid #333; }
+.stat-card.max { border-color: var(--accent); background: linear-gradient(160deg, #263326, #2b2b33); }
+.stat-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.stat-big { font-size: 30px; font-weight: 700; line-height: 1.2; margin: 4px 0; }
+.stat-big small { display: block; font-size: 12px; font-weight: 400; color: var(--muted); }
+.stat-row { display: flex; justify-content: space-between; color: var(--text); font-size: 13px; }
+.ladder { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.ladder th { text-align: left; color: var(--muted); font-weight: 500; padding: 2px 6px; border-bottom: 1px solid #333; }
+.ladder td { padding: 4px 6px; }
+.ladder tbody tr { cursor: pointer; border-radius: 6px; }
+.ladder tbody tr:hover, .ladder tbody tr.selected { background: #2b2b33; }
+.ladder tr.won td:first-child { color: var(--accent); font-weight: 600; }
+.ladder tr.max td { background: rgba(127, 176, 105, .12); }
+.ladder .wdl b { color: var(--accent); }
+.stat-foot { color: var(--muted); font-size: 11px; margin-top: 8px; }

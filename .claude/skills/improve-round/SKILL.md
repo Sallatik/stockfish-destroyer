@@ -15,8 +15,9 @@ All state lives in `JOURNAL.md` (**State**, **Plan** queue, **Tried**) and `camp
 
 ## 1. Ingest campaign results
 `tail -30 campaign.log` and `git status --short games/`. For each new game, note Elo and result.
-- A **win** at Elo X above the current best: update State → "Best verified win" and "Highest won". Then shift `campaign.json` slots up: every slot ≤ X becomes X+100 (cap 3190), keep the spread shape (two at the top level, one and two steps below).
-- Update State → "Campaign scoreboard" (per level: wins/draws/losses, all-time). Also compute per-level average eval loss per move for our side from the `.evals.json` files, if available, as the progress metric.
+- A **win** at Elo X above the current best: update State → "Best verified win" and "Highest won". Then shift `campaign.json` slots up: every slot ≤ X becomes X+100, keep the spread shape (two at the top level, one and two steps below). **Cap: 3190** (Stockfish's maximum). Any slot that would exceed 3190 becomes 3190.
+- **At the top (addendum)**: once "Highest won" is 3190, set *every* slot to 3190 and stop shifting. From then on the score is the **win ratio at 3190** (wins / all games at 3190) and the **average game length in moves**; record both in State → "Level-3190 metrics" every round and make the engine change that most improves the ratio (draws count against us, so contempt and conversion speed matter).
+- Update State → "Campaign scoreboard" with `uv run python -m arena.stats` (per level: W-D-L, win ratio, average moves). The same numbers are shown in the replay UI's ladder panel; keep them consistent.
 
 ## 2. Analyze new games (required by the rules)
 Run the `analyze-game` skill with no argument: it analyzes every game without a report, all agents in one parallel batch. If there are more than 6 unanalyzed games, analyze the 6 most recent at the highest levels now and the rest next round.
@@ -45,4 +46,4 @@ Baseline = "Last kept engine tag" from State (`scripts/build-engine.sh <tag>` �
 - `git push` (State → Push: yes). If the push is rejected, `git pull --rebase` and push again; games never conflict (unique filenames), `games/index.json` can be regenerated with `uv run python -c "from arena.play import rebuild_index; rebuild_index()"`.
 
 ## 7. Report and stop
-Five lines max: campaign results this round, best win so far, the change, gauntlet result, what's next. Then stop: the loop schedules the next round. If the Plan queue is empty and there are no new action items, say so and suggest the user set `Freeze: yes`.
+Five lines max: campaign results this round, best win so far (and, once at 3190, the win ratio + average moves there), the change, gauntlet result, what's next. Then stop: the loop schedules the next round. If the Plan queue is empty and there are no new action items, say so and suggest the user set `Freeze: yes`.
