@@ -1,0 +1,14 @@
+[Event "Stockfish Destroyer match"]
+[Site "?"]
+[Date "2026.09.26"]
+[Round "?"]
+[White "Destroyer 0.7.0"]
+[Black "Stockfish 17.1 (UCI_Elo 2700)"]
+[Result "0-1"]
+[WhiteElo "?"]
+[BlackElo "2700"]
+[TimeControl "5.0s/move"]
+[StockfishElo "2700"]
+[Termination "adjudication (resigned: hopeless position)"]
+
+1. e4 e5 2. Nf3 d6 3. d4 exd4 4. Nxd4 Nf6 5. Nc3 Be7 6. Bf4 O-O 7. Be2 Re8 8. O-O Nbd7 9. Rc1 h6 10. Nf5 Bf8 11. Ng3 a6 12. Be3 b5 13. Nd5 Rb8 14. Ba7 Rb7 15. Bd4 Nxe4 16. Nxe4 c5 17. Bxg7 Rxe4 18. Bf3 Re8 19. Bxf8 Rxf8 20. Qd2 Kg7 21. Ne3 Rb6 22. Nf5+ Kg8 23. Nxh6+ Kg7 24. Nf5+ Kg8 25. Nxd6 Ne5 26. Rfd1 Nxf3+ 27. gxf3 Qh4 28. Qd5 Kh7 29. Kh1 Be6 30. Qxc5 Qh3 31. Rd3 Bc4 32. Qxb6 Rg8 33. Rg1 Bxd3 34. Rxg8 Kxg8 35. Qd8+ Kh7 36. Qg5 Qxf3+ 37. Kg1 Qd1+ 38. Kg2 Bf1+ 39. Kg3 Qxd6+ 40. f4 b4 41. Qf5+ Qg6+ 42. Qxg6+ Kxg6 43. a3 bxa3 44. bxa3 Bc4 45. Kf2 f6 46. Ke3 Kf5 47. Kd4 Bg8 48. c4 Be6 49. c5 Kxf4 50. c6 f5 51. a4 a5 52. h4 Kg4 53. Ke5 Bc8 54. h5 Kxh5 55. Kf4 Be6 56. Ke5 Bc8 57. Kf4 Kh6 58. c7 Kh5 59. Ke5 Kg5 60. Kd6 f4 61. Ke7 f3 62. Kd8 Bf5 63. c8=Q Bxc8 64. Kxc8 f2 65. Kc7 Kf4 66. Kd6 f1=Q 67. Kd5 Ke3 68. Ke5 Qa1+ 69. Kf5 Kd3 70. Ke6 Qxa4 71. Kd5 Kc3 72. Ke5 Qd4+ 73. Ke6 a4 74. Kf7 Qb4 75. Kf6 a3 76. Kf7 Qf4+ 77. Ke6 Qe4+ 78. Kf6 a2 79. Kg5 a1=Q 80. Kf6 Kc2+ 81. Kf7 Qa7+ 82. Kf6 Qg1 83. Kf7 Kd3 0-1

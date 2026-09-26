@@ -1,0 +1,15 @@
+{
+  "file": "2026-09-26T105234_sf2700_loss.pgn",
+  "date": "2026-09-26T10:52:34",
+  "stockfish_elo": 2700,
+  "stockfish_version": "Stockfish 17.1",
+  "our_engine": "Destroyer 0.7.0",
+  "our_color": "white",
+  "result": "0-1",
+  "outcome": "loss",
+  "plies": 166,
+  "move_time_s": 5.0,
+  "adjudicated": true,
+  "engine_commit": "44637d6",
+  "hardware": "Apple M5 Pro, 15 cores, Darwin"
+}

@@ -1,0 +1,14 @@
+[Event "Stockfish Destroyer match"]
+[Site "?"]
+[Date "2026.09.26"]
+[Round "?"]
+[White "Destroyer 0.7.0"]
+[Black "Stockfish 17.1 (UCI_Elo 2600)"]
+[Result "1/2-1/2"]
+[WhiteElo "?"]
+[BlackElo "2600"]
+[TimeControl "5.0s/move"]
+[StockfishElo "2600"]
+[Termination "threefold_repetition"]
+
+1. e4 e6 2. d4 d5 3. Nc3 Nf6 4. Bg5 dxe4 5. Nxe4 Be7 6. Bxf6 gxf6 7. Nf3 a6 8. Bd3 b5 9. O-O f5 10. Ng3 Nc6 11. c3 Qd6 12. a4 bxa4 13. Qxa4 Bb7 14. Rad1 Kf8 15. Bc4 h5 16. d5 Ne5 17. Nxe5 Qxe5 18. Qb3 Bc8 19. Rde1 Qf6 20. dxe6 h4 21. Nxf5 Qxf5 22. exf7 Bd7 23. Qb7 Rd8 24. Re3 Bd6 25. Rf3 Qe5 26. g3 Rh7 27. Rd1 Bc8 28. Qa8 hxg3 29. Rxg3 Rg7 30. Qg2 Bf5 31. Ra1 Bc8 32. Rxg7 Qxg7 33. h4 Be7 34. Qxg7+ Kxg7 35. Re1 Kf8 36. h5 Rd2 37. b3 Rd8 38. f3 Bf6 39. Re3 Be7 40. Re5 Rd1+ 41. Kg2 Rd2+ 42. Kf1 Rd1+ 43. Ke2 Rg1 44. Kd3 Rf1 45. Bd5 Rd1+ 46. Ke2 Rc1 47. Kd2 Rg1 48. b4 Rg2+ 49. Ke3 Rh2 50. Bc4 Rh4 51. Bb3 Rh1 52. Ke2 Rh4 53. Kf2 Bd7 54. Kg3 Rh1 55. Kg2 Rc1 56. h6 Bf6 57. Rc5 Rxc3 58. Bc4 Rc2+ 59. Kg3 a5 60. bxa5 Be6 61. Bxe6 Rxc5 62. a6 Ra5 63. Bc4 Bh8 64. Kh3 c6 65. Kg3 Ra4 66. Bb3 Rxa6 67. Kg4 Ra3 68. Be6 Ra4+ 69. f4 c5 70. h7 Re4 71. Bf5 Rd4 72. Bg6 c4 73. Kf3 Rd2 74. Ke3 c3 75. Bd3 Rg2 76. Kf3 Rh2 77. Ke3 c2 78. Bxc2 Rxc2 79. Kd3 Rc8 80. Ke4 Rc5 81. Kf3 Rc4 82. Kg4 Rc3 83. Kf5 Rh3 84. Ke6 Rh6+ 85. Kf5 Rc6 86. Ke4 Rc4+ 87. Kd5 Rb4 88. f5 Kxf7 89. Kc5 Ra4 90. Kc6 Rd4 91. Kb6 Rd5 92. Kc6 Rxf5 93. Kd6 Re5 94. Kc7 Rh5 95. Kd7 Rd5+ 96. Kc6 Rh5 97. Kd7 Re5 98. Kc7 Ke6 99. Kc6 Rd5 100. Kc7 Rf5 101. Kc6 Rh5 102. Kc7 Rxh7+ 103. Kc6 Bf6 104. Kc5 Rh5+ 105. Kc4 Rh3 106. Kc5 Rb3 107. Kc4 Rb7 108. Kd3 Bd8 109. Ke4 Rb4+ 110. Kd3 Kd5 111. Ke3 Bf6 112. Kf3 Be5 113. Ke3 Rb2 114. Kf3 Rc2 115. Ke3 Rc6 116. Kf3 Bd6 117. Ke3 Rc4 118. Kd3 Bf4 119. Ke2 Ke4 120. Kf2 Rc3 121. Kg2 Rc2+ 122. Kf1 Be3 123. Ke1 Ra2 124. Kf1 Rc2 125. Ke1 Rb2 126. Kf1 1/2-1/2
