@@ -56,11 +56,69 @@ struct Search<'a> {
     contempt: i32,
     /// score of the best root move from the last completed iteration
     best_score: i32,
+    /// two killer moves (quiet moves that caused a beta cutoff) per ply
+    killers: Vec<[Option<Move>; 2]>,
+    /// history heuristic: [color][from][to] cutoff counts for quiet moves
+    history: Vec<i32>,
 }
 
 impl<'a> Search<'a> {
     fn new(tt: &'a mut Table, deadline: Instant, history: &[u64], contempt: i32) -> Self {
-        Search { tt, deadline, nodes: 0, stopped: false, path: history.to_vec(), n_hist: history.len(), contempt, best_score: 0 }
+        Search {
+            tt,
+            deadline,
+            nodes: 0,
+            stopped: false,
+            path: history.to_vec(),
+            n_hist: history.len(),
+            contempt,
+            best_score: 0,
+            killers: vec![[None, None]; MAX_PLY as usize + 2],
+            history: vec![0; 2 * 64 * 64],
+        }
+    }
+
+    fn history_index(color: Color, m: &Move) -> usize {
+        let c = if color == Color::White { 0 } else { 1 };
+        let from = m.from().map_or(0, usize::from);
+        c * 4096 + from * 64 + usize::from(m.to())
+    }
+
+    /// Move ordering score: hash move, then captures/promotions (MVV-LVA), then killers, then
+    /// quiet moves by history.
+    fn order_score(&self, m: &Move, hash_move: &Option<Move>, ply: i32, turn: Color) -> i32 {
+        if Some(m) == hash_move.as_ref() {
+            return 1_000_000;
+        }
+        if m.is_capture() || m.is_promotion() {
+            return 100_000 + mvv_lva(m);
+        }
+        let k = &self.killers[ply as usize];
+        if k[0].as_ref() == Some(m) {
+            return 90_000;
+        }
+        if k[1].as_ref() == Some(m) {
+            return 80_000;
+        }
+        self.history[Self::history_index(turn, m)]
+    }
+
+    fn record_cutoff(&mut self, m: &Move, ply: i32, depth: u32, turn: Color) {
+        if m.is_capture() || m.is_promotion() {
+            return;
+        }
+        let k = &mut self.killers[ply as usize];
+        if k[0].as_ref() != Some(m) {
+            k[1] = k[0].take();
+            k[0] = Some(m.clone());
+        }
+        let idx = Self::history_index(turn, m);
+        self.history[idx] += (depth * depth) as i32;
+        if self.history[idx] > 1 << 20 {
+            for h in self.history.iter_mut() {
+                *h /= 2;
+            }
+        }
     }
 
     /// Draw score from the perspective of the side to move at `ply` (root side = even plies).
@@ -119,12 +177,13 @@ impl<'a> Search<'a> {
                 }
             }
         }
-        let mut ordered: Vec<Move> = moves.into_iter().collect();
-        ordered.sort_by_key(|m| if Some(m) == hash_move.as_ref() { i32::MIN } else { -mvv_lva(m) });
+        let turn = pos.turn();
+        let mut ordered: Vec<(i32, Move)> = moves.into_iter().map(|m| (self.order_score(&m, &hash_move, ply, turn), m)).collect();
+        ordered.sort_by_key(|(score, _)| -*score);
         let alpha_orig = alpha;
         let mut best_score = -INF;
         let mut best_move = None;
-        for m in ordered {
+        for (_, m) in ordered {
             let mut child = pos.clone();
             child.play_unchecked(&m);
             let score = -self.negamax(&child, depth - 1, -beta, -alpha, ply + 1);
@@ -133,12 +192,13 @@ impl<'a> Search<'a> {
             }
             if score > best_score {
                 best_score = score;
-                best_move = Some(m);
+                best_move = Some(m.clone());
             }
             if score > alpha {
                 alpha = score;
             }
             if alpha >= beta {
+                self.record_cutoff(&m, ply, depth, turn);
                 break;
             }
         }
@@ -401,5 +461,33 @@ mod tests {
         let m2 = s2.best_move(&pos);
         assert!(m1.is_some() && m2.is_some());
         assert!(n1 > 10_000);
+    }
+
+    #[test]
+    fn killers_and_history_record_quiet_cutoffs_only() {
+        let (pos, hist) = parse_position(&args("startpos"));
+        let mut tt = Table::new(12);
+        let mut s = Search::new(&mut tt, Instant::now() + Duration::from_secs(1), &hist, CONTEMPT);
+        let quiet = pos.legal_moves().into_iter().find(|m| !m.is_capture()).unwrap();
+        s.record_cutoff(&quiet, 3, 4, Color::White);
+        assert_eq!(s.killers[3][0].as_ref(), Some(&quiet));
+        assert_eq!(s.history[Search::history_index(Color::White, &quiet)], 16);
+        // ordering: the killer now outranks other quiet moves at that ply
+        let other = pos.legal_moves().into_iter().find(|m| !m.is_capture() && m != &quiet).unwrap();
+        assert!(s.order_score(&quiet, &None, 3, Color::White) > s.order_score(&other, &None, 3, Color::White));
+        // captures still come first
+        let (cap_pos, _) = parse_position(&args("startpos moves e2e4 d7d5"));
+        let cap = cap_pos.legal_moves().into_iter().find(|m| m.is_capture()).unwrap();
+        assert!(s.order_score(&cap, &None, 3, Color::White) > s.order_score(&quiet, &None, 3, Color::White));
+    }
+
+    #[test]
+    fn search_still_finds_mate_with_new_ordering() {
+        let (pos, hist) = parse_position(&args("fen k7/8/2K5/8/8/8/8/7R w - - 0 1"));
+        let mut tt = Table::new(16);
+        let mut s = Search::new(&mut tt, Instant::now() + Duration::from_millis(500), &hist, CONTEMPT);
+        let m = s.best_move(&pos).unwrap();
+        assert_eq!(m.to_uci(CastlingMode::Standard).to_string(), "c6b6");
+        assert_eq!(s.best_score, MATE - 3);
     }
 }
