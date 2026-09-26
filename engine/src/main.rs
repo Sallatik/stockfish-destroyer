@@ -60,6 +60,8 @@ struct Search<'a> {
     killers: Vec<[Option<Move>; 2]>,
     /// history heuristic: [color][from][to] cutoff counts for quiet moves
     history: Vec<i32>,
+    /// ply at which the last null move was played (no two null moves in a row)
+    null_ply: i32,
 }
 
 impl<'a> Search<'a> {
@@ -75,7 +77,14 @@ impl<'a> Search<'a> {
             best_score: 0,
             killers: vec![[None, None]; MAX_PLY as usize + 2],
             history: vec![0; 2 * 64 * 64],
+            null_ply: -2,
         }
+    }
+
+    /// Null-move pruning is unsafe in zugzwang-prone positions: require a piece besides king+pawns.
+    fn has_non_pawn_material(pos: &Chess, color: Color) -> bool {
+        let b = pos.board();
+        (b.by_color(color) & (b.knights() | b.bishops() | b.rooks() | b.queens())).any()
     }
 
     fn history_index(color: Color, m: &Move) -> usize {
@@ -178,6 +187,27 @@ impl<'a> Search<'a> {
             }
         }
         let turn = pos.turn();
+        // null-move pruning: if passing still fails high with a reduced search, this node is a cutoff
+        if depth >= 3
+            && ply > 0
+            && !pos.is_check()
+            && beta.abs() < MATE - MAX_PLY
+            && self.null_ply != ply - 1
+            && Self::has_non_pawn_material(pos, turn)
+        {
+            if let Ok(null_pos) = pos.clone().swap_turn() {
+                let r = if depth > 6 { 3 } else { 2 };
+                self.null_ply = ply;
+                let score = -self.negamax(&null_pos, depth - 1 - r, -beta, -beta + 1, ply + 1);
+                self.null_ply = -2;
+                if self.stopped {
+                    return 0;
+                }
+                if score >= beta {
+                    return beta;
+                }
+            }
+        }
         let mut ordered: Vec<(i32, Move)> = moves.into_iter().map(|m| (self.order_score(&m, &hash_move, ply, turn), m)).collect();
         ordered.sort_by_key(|(score, _)| -*score);
         let alpha_orig = alpha;
@@ -489,5 +519,24 @@ mod tests {
         let m = s.best_move(&pos).unwrap();
         assert_eq!(m.to_uci(CastlingMode::Standard).to_string(), "c6b6");
         assert_eq!(s.best_score, MATE - 3);
+    }
+
+    #[test]
+    fn null_move_is_skipped_in_pawn_endgames_and_still_finds_the_win() {
+        // K+P vs K: white wins only with the right king move; null move must not misjudge zugzwang
+        let (pos, hist) = parse_position(&args("fen 8/8/8/4k3/8/4K3/4P3/8 w - - 0 1"));
+        assert!(!Search::has_non_pawn_material(&pos, Color::White));
+        let mut tt = Table::new(16);
+        let mut s = Search::new(&mut tt, Instant::now() + Duration::from_millis(500), &hist, CONTEMPT);
+        let m = s.best_move(&pos).unwrap().to_uci(CastlingMode::Standard).to_string();
+        assert!(m == "e3d3" || m == "e3f3", "expected a winning king move, got {m}");
+    }
+
+    #[test]
+    fn null_move_position_is_the_same_board_with_the_turn_swapped() {
+        let (pos, _) = parse_position(&args("startpos moves e2e4"));
+        let np = pos.clone().swap_turn().unwrap();
+        assert_eq!(np.turn(), Color::White);
+        assert_eq!(np.board(), pos.board());
     }
 }
