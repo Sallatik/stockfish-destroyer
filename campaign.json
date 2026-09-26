@@ -1,9 +1,9 @@
 {
   "slots": [
+    2900,
+    2900,
     2800,
-    2800,
-    2700,
-    2600
+    2700
   ],
   "engine": "bin/destroyer-official",
   "move_time": 5.0,
