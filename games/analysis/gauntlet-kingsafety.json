@@ -1,0 +1,17 @@
+{
+  "a": "bin/destroyer",
+  "b": "bin/destroyer-engine-v5",
+  "games": 200,
+  "wins": 68,
+  "draws": 32,
+  "losses": 100,
+  "score": 0.42,
+  "elo": -56.1,
+  "elo_95": [
+    -101.9,
+    -12.1
+  ],
+  "los": 0.0068,
+  "move_time_s": 0.1,
+  "verdict": "REVERT"
+}
