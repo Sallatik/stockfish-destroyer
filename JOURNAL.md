@@ -8,7 +8,7 @@ Loop state + running log. Newest log entries on top. Keep entries short.
 - Level-3190 metrics: not reached yet (highest won 2800).
 - Highest won: **2800** (target 2000 and stretch 2200 both passed; now probing 2900)
 - Last kept engine tag: engine-v7 (promoted to `bin/destroyer-official`)
-- Freeze: no  ← set to `yes` at 17:00
+- Freeze: **yes** (11:45, demo at 12:00; engine-v7 is the frozen build). Loop stopped; campaign keeps playing 2900/2900/2800/2800 with `bin/destroyer-official` = engine-v7.
 - Push: yes
 - Campaign scoreboard (all-time, we are white, W-D-L): SF1320 1-0-0 · SF1600 1-1-0 · SF1800 1-1-0 · SF1900 1-0-0 · SF2000 4-4-1 · SF2100 5-1-1 · SF2200 8-0-2 · SF2300 7-0-0 · SF2400 8-0-1 · SF2500 6-0-1 · SF2600 7-2-1 · SF2700 4-0-2 · SF2800 1-4-2
 - Progress metric (mistakes ≥100 cp by our side per game, from evals): engine-v1 9–27 per game; engine-v2 0–2; engine-v3 0–1 (SF2000 win: 0, SF2100 win: 1)
@@ -46,6 +46,7 @@ Loop state + running log. Newest log entries on top. Keep entries short.
 - **King safety v1** (2026-09-26 09:50, on engine-v5): MG-only term = pawn shield (+14 near / +7 far per file), open files next to the king (-18 own, -12 both), enemy pieces attacking the king zone as attack units (N2 B2 R3 Q5, halved without a queen) squared (up to -225). Gauntlet vs v5 at 0.1 s: **-56 Elo [-102, -12]**, +68 =32 -100 → reverted. Fixed hxg6 in the SF2100 loss position but not the deeper g3/Kf3/Rxf2 blunders. Likely too strong: the squared attack term outweighs material at shallow depth. Retry only as v2: shield + open files only, or a linear attack term capped at ~60 cp, and test at 0.2 s as well.
 
 ## Log
+- **11:45 freeze**: demo in 15 min. Engine frozen at engine-v7 (Destroyer 0.8.0). Loop stopped, no gauntlets. Campaign slots 2900/2900/2800/2800. Best verified win: SF2800. Analysis backlog (agent reports) remains for ~30 lower-level games; evals exist for all.
 - **11:40 round 9**: campaign: first **SF2800 win** (v7, 83 plies, 0 mistakes), SF2800 0-4-2 otherwise (draws by repetition, one loss after g4/gxf5), lost SF2700 and SF2600 once each · endgame eval pass v1 · gauntlet vs v7 -21 [-68, +25] then -22 [-51, +6] over 500 games · **reverted** (see Tried) · analyzed the 3 first SF2800 games · slots → 2900/2900/2800/2700 · openings.epd grown to 250 · next: check extensions, then king safety v2 (the SF2800 loss was pure self-inflicted king exposure).
 - **10:55 round 8**: campaign: WON **SF2700** (v6, 157 plies), SF2600 ×3, SF2500 ×4, drew SF2600, lost SF2500 (v5, slow slide, no blunder) · null-move pruning (R=2, R=3 above depth 6; skipped in check, after a null, in pawn endgames) · +2 plies at 3 s on test positions · gauntlet vs v6 +58 Elo [+15, +102] (+96 =41 -63) · kept → engine-v7, promoted · slots → 2800/2800/2700/2600 · analyzing 6 games.
 - **10:25 round 7**: campaign: WON **SF2600**, SF2500 ×2, SF2400 ×5, lost SF2400 ×1 and SF2200 ×1 (190 plies) · killer moves + history heuristic · gauntlet vs v5 +53 Elo [+10, +97] (+95 =40 -65) · kept → engine-v6, promoted · slots → 2700/2700/2600/2500 · analyzing 6 games (SF2500 win, SF2400 loss, SF2200 loss, 3× SF2400 wins).
