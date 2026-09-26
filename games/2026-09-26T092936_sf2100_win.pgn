@@ -1,0 +1,14 @@
+[Event "Stockfish Destroyer match"]
+[Site "?"]
+[Date "2026.09.26"]
+[Round "?"]
+[White "Destroyer 0.5.0"]
+[Black "Stockfish 17.1 (UCI_Elo 2100)"]
+[Result "1-0"]
+[WhiteElo "?"]
+[BlackElo "2100"]
+[TimeControl "5.0s/move"]
+[StockfishElo "2100"]
+[Termination "checkmate"]
+
+1. e4 Nc6 2. Nf3 a6 3. d4 d6 4. Bc4 e5 5. dxe5 Bg4 6. exd6 Qxd6 7. Bxf7+ Kd7 8. Nbd2 Qf6 9. h3 Kc8 10. Bd5 Be6 11. O-O Bc5 12. Nb3 Be7 13. Ng5 Bxd5 14. exd5 Nd8 15. Nd4 Bc5 16. Be3 b6 17. Qg4+ Kb8 18. Ne4 h5 19. Nxf6 Bxd4 20. Nd7+ Kc8 21. Nxb6+ Kb7 22. Qxd4 cxb6 23. Qxg7+ Nf7 24. Qxf7+ Ne7 25. Qxe7+ Kc8 26. Bxb6 h4 27. Qc7# 1-0
