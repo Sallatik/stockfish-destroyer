@@ -20,7 +20,7 @@ pub fn probe(pos: &Chess) -> Option<Move> {
 mod tests {
     use super::*;
     use shakmaty::fen::Fen;
-    use shakmaty::CastlingMode;
+    use shakmaty::{CastlingMode, Position};
 
     #[test]
     fn startpos_is_in_book() {
