@@ -1,0 +1,15 @@
+{
+  "file": "2026-09-26T103212_sf2500_win.pgn",
+  "date": "2026-09-26T10:32:12",
+  "stockfish_elo": 2500,
+  "stockfish_version": "Stockfish 17.1",
+  "our_engine": "Destroyer 0.7.0",
+  "our_color": "white",
+  "result": "1-0",
+  "outcome": "win",
+  "plies": 101,
+  "move_time_s": 5.0,
+  "adjudicated": false,
+  "engine_commit": "168baa6",
+  "hardware": "Apple M5 Pro, 15 cores, Darwin"
+}
