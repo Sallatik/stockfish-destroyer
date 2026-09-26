@@ -1,6 +1,7 @@
 //! Stockfish Destroyer: UCI engine.
 //! Iterative-deepening alpha-beta + quiescence search, tapered PeSTO evaluation.
 
+mod book;
 mod eval;
 use eval::evaluate;
 
@@ -252,6 +253,12 @@ fn main() {
             }
             Some("position") => (pos, history) = parse_position(&parts[1..]),
             Some("go") => {
+                if let Some(m) = book::probe(&pos) {
+                    println!("info string book move");
+                    println!("bestmove {}", m.to_uci(CastlingMode::Standard));
+                    io::stdout().flush().ok();
+                    continue;
+                }
                 // if we are clearly lost anyway, a draw is welcome
                 let contempt = if evaluate(&pos) < -300 { 0 } else { CONTEMPT };
                 let mut s = Search::new(Instant::now() + think_time(&parts[1..], pos.turn()), &history, contempt);
